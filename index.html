@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fragrance Archetype Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #000;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 700px;
+    }
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .question {
+      font-size: 18px;
+      margin: 20px 0 10px;
+    }
+    .options button {
+      display: block;
+      margin: 5px 0;
+      padding: 10px;
+      width: 100%;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .result {
+      display: none;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Fragrance Archetype</h1>
+    <div id="quiz">
+      <div class="question" id="questionContainer"></div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+    <div class="result" id="resultContainer">
+      <h2 id="resultTitle"></h2>
+      <p id="resultDescription"></p>
+    </div>
+  </div>
+  <script>
+    const questions = [
+      {
+        text: "Choose your soundtrack:",
+        options: [
+          { text: "Experimental electronica", value: "muscara" },
+          { text: "Classic piano nocturne", value: "le_dix" },
+          { text: "Hypnotic techno", value: "100_percent" },
+          { text: "Atmospheric ambient", value: "to_be_confirmed" }
+        ]
+      },
+      {
+        text: "Pick your ideal dinner:",
+        options: [
+          { text: "Raw oysters by the sea", value: "getaria" },
+          { text: "Dark chocolate fondant", value: "twenty_four_seven" },
+          { text: "Chef’s private tasting menu", value: "cristobal" },
+          { text: "Fasting in ritual silence", value: "incense_perfumum" }
+        ]
+      },
+      {
+        text: "Your travel escape is:",
+        options: [
+          { text: "A misty Nordic coastline", value: "getaria" },
+          { text: "Velvet-curtained hotel in Paris", value: "100_percent" },
+          { text: "Hidden desert monastery", value: "incense_perfumum" },
+          { text: "LA chaos at 3 a.m.", value: "extra" }
+        ]
+      },
+      {
+        text: "Which dog is your familiar?",
+        options: [
+          { text: "Greyhound", value: "cristobal" },
+          { text: "Afghan Hound", value: "le_dix" },
+          { text: "Pomeranian", value: "extra" },
+          { text: "Shiba Inu", value: "to_be_confirmed" }
+        ]
+      },
+      {
+        text: "Mountain or Beach?",
+        options: [
+          { text: "Beach at night", value: "100_percent" },
+          { text: "Mountain for solitude", value: "incense_perfumum" },
+          { text: "City rooftop", value: "no_comment" },
+          { text: "A cove with cold sea and warm rock", value: "getaria" }
+        ]
+      },
+      {
+        text: "Your favorite dish reveals:",
+        options: [
+          { text: "Glossy, lacquered heat", value: "muscara" },
+          { text: "Archivist's precision", value: "le_dix" },
+          { text: "Molten vanilla desire", value: "twenty_four_seven" },
+          { text: "Flamboyant decadence", value: "extra" }
+        ]
+      },
+      {
+        text: "Which quote resonates most?",
+        options: [
+          { text: "I begin and end the story.", value: "incense_perfumum" },
+          { text: "Too much? Perfect.", value: "extra" },
+          { text: "I decide who I am. And you'll never quite know.", value: "no_comment" },
+          { text: "Only those who know, know.", value: "cristobal" }
+        ]
+      }
+    ];
+
+    const results = {
+      muscara: { title: "You Are: The Instinct", description: "Heat-driven, sensual, unfiltered. A pulse before the flame." },
+      le_dix: { title: "You Are: The Archivist", description: "Refined, poised, precise. You carry memory with elegance." },
+      100_percent: { title: "You Are: The Nocturne", description: "Coldly seductive, cinematic, unforgettable. You are the night." },
+      to_be_confirmed: { title: "You Are: The Enigma", description: "You reveal nothing and everything at once. Soft power." },
+      getaria: { title: "You Are: The Elemental", description: "Sea and earth. You are rooted, yet always shifting." },
+      twenty_four_seven: { title: "You Are: The Magnet", description: "Desirable, persistent, addictive. You leave a taste behind." },
+      cristobal: { title: "You Are: The Collector", description: "Elevated and elusive. You know what matters and keep it sacred." },
+      incense_perfumum: { title: "You Are: The Oracle", description: "Spiritual, minimal, eternal. You begin and end the story." },
+      extra: { title: "You Are: The Diva", description: "Flamboyant, loud, irresistible. You're the moment and the aftermath." },
+      no_comment: { title: "You Are: The Strategist", description: "Self-possessed, sleek, controlled. You project only what you choose." }
+    };
+
+    let currentQuestion = 0;
+    let scores = {
+      muscara: 0, le_dix: 0, 100_percent: 0, to_be_confirmed: 0,
+      getaria: 0, twenty_four_seven: 0, cristobal: 0,
+      incense_perfumum: 0, extra: 0, no_comment: 0
+    };
+
+    const questionContainer = document.getElementById("questionContainer");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const resultContainer = document.getElementById("resultContainer");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultDescription = document.getElementById("resultDescription");
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      questionContainer.innerText = q.text;
+      optionsContainer.innerHTML = "";
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.innerText = opt.text;
+        btn.onclick = () => {
+          scores[opt.value]++;
+          currentQuestion++;
+          if (currentQuestion < questions.length) {
+            showQuestion();
+          } else {
+            showResult();
+          }
+        };
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function showResult() {
+      document.getElementById("quiz").style.display = "none";
+      resultContainer.style.display = "block";
+      const highest = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+      resultTitle.innerText = results[highest].title;
+      resultDescription.innerText = results[highest].description;
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
